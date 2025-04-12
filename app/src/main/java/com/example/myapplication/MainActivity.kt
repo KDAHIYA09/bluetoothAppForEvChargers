@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,7 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
     private lateinit var available_bluetooth_devices_adapter : bluetoothDevicesListAdapter
+    private lateinit var connected_device_adapter : connectedDeviceDetailsAdapter
     private var deviceList = mutableListOf<bluetoothDevicesListDataClass>()
+    private var connectedDeviceData = mutableListOf<connectedDeviceDetailsDataClass>()
     private var selectedDevice : bluetoothDevicesListDataClass? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,45 +31,72 @@ class MainActivity : AppCompatActivity() {
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
 
-       //available devices adapter
-        available_bluetooth_devices_adapter = bluetoothDevicesListAdapter(deviceList){
-            device -> selectedDevice = device
-            //Toast.makeText(this, "Conneting to ${device.name}", Toast.LENGTH_SHORT).show()
+        setupAvailableDevicesRecyclerView()
+        setupConnectedDevicesRecyclerView()
+        handleSearchDeviceClick()
 
-            mainBinding.availableDevicesListRv.visibility = View.GONE
-            mainBinding.connectedDeviceDetailLlId.visibility = View.VISIBLE
+        mainBinding.disconnectDeviceButtonId.setOnClickListener{
+            resetToInitialState()
+            mainBinding.disconnectDeviceButtonId.visibility = View.GONE
+        }
 
+
+
+
+
+    }
+
+    private fun setupAvailableDevicesRecyclerView() {
+        available_bluetooth_devices_adapter = bluetoothDevicesListAdapter(deviceList) { device ->
+            handleDeviceSelection(device)
         }
         mainBinding.availableDevicesListRv.adapter = available_bluetooth_devices_adapter
         mainBinding.availableDevicesListRv.layoutManager = LinearLayoutManager(this)
+    }
 
-        //connected device adapter
-        val connected_device_adapter = connectedDeviceDetailsAdapter(connectedDeviceDetails)
+    private fun setupConnectedDevicesRecyclerView() {
+        connected_device_adapter = connectedDeviceDetailsAdapter(connectedDeviceData)
         mainBinding.deviceDetailsRvId.adapter = connected_device_adapter
         mainBinding.deviceDetailsRvId.layoutManager = LinearLayoutManager(this)
+    }
 
-        mainBinding.searchDeviceButtonId.setOnClickListener{
+    private fun handleDeviceSelection(device: bluetoothDevicesListDataClass) {
+        selectedDevice = device
+
+        mainBinding.availableDevicesListRv.visibility = View.GONE
+        mainBinding.searchDeviceButtonId.isEnabled = false
+        mainBinding.connectedDeviceDetailLlId.visibility = View.VISIBLE
+        mainBinding.shimmerViewContainer.startShimmer()
+        mainBinding.shimmerViewContainer.visibility = View.VISIBLE
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val dummyData = getDummyDeviceData()
+            connectedDeviceData.clear()
+            connectedDeviceData.addAll(dummyData)
+            connected_device_adapter.notifyDataSetChanged()
+
+            mainBinding.shimmerViewContainer.stopShimmer()
+            mainBinding.shimmerViewContainer.visibility = View.GONE
+            mainBinding.deviceDetailsRvId.visibility = View.VISIBLE
+            mainBinding.disconnectDeviceButtonId.visibility = View.VISIBLE
+        }, 1500)
+    }
+
+    private fun handleSearchDeviceClick() {
+        mainBinding.searchDeviceButtonId.setOnClickListener {
             Toast.makeText(this, getString(R.string.search_device_toast_txt), Toast.LENGTH_SHORT).show()
+            mainBinding.loadingProgressBar.visibility = View.VISIBLE
 
-            //search bluetooth fxn will be implemented here
-            //dummy data for now
-            val dummyDevices = getDummyBluetoothDevices()
-            deviceList.clear()
-            deviceList.addAll(dummyDevices)
-            available_bluetooth_devices_adapter.notifyDataSetChanged()
+            Handler(Looper.getMainLooper()).postDelayed({
+                val dummyDevices = getDummyBluetoothDevices()
+                deviceList.clear()
+                deviceList.addAll(dummyDevices)
+                available_bluetooth_devices_adapter.notifyDataSetChanged()
 
-            //after list is fetched display it in recycler view
-            mainBinding.availableDevicesListRv.visibility = View.VISIBLE
-
-
-
-
+                mainBinding.loadingProgressBar.visibility = View.GONE
+                mainBinding.availableDevicesListRv.visibility = View.VISIBLE
+            }, 1500)
         }
-
-
-
-
-
     }
 
     private fun getDummyBluetoothDevices(): List<bluetoothDevicesListDataClass> {
@@ -76,14 +107,29 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    val connectedDeviceDetails = listOf(
-        connectedDeviceDetailsDataClass("Device Name", "EV Charger X100"),
-        connectedDeviceDetailsDataClass("MAC Address", "00:11:22:33:44:55"),
-        connectedDeviceDetailsDataClass("Signal Strength", "-65 dBm"),
-        connectedDeviceDetailsDataClass("Battery Level", "85%"),
-        connectedDeviceDetailsDataClass("Charging Status", "Connected"),
-        connectedDeviceDetailsDataClass("Firmware Version", "v1.2.3"),
-        connectedDeviceDetailsDataClass("Last Synced", "10 Apr 2025, 11:00 PM")
-    )
+    private fun getDummyDeviceData() : List<connectedDeviceDetailsDataClass>{
+        return  listOf(
+            connectedDeviceDetailsDataClass("Device Name", "EV Charger X100"),
+            connectedDeviceDetailsDataClass("MAC Address", "00:11:22:33:44:55"),
+            connectedDeviceDetailsDataClass("Signal Strength", "-65 dBm"),
+            connectedDeviceDetailsDataClass("Battery Level", "85%"),
+            connectedDeviceDetailsDataClass("Charging Status", "Connected"),
+            connectedDeviceDetailsDataClass("Firmware Version", "v1.2.3"),
+            connectedDeviceDetailsDataClass("Last Synced", "10 Apr 2025, 11:00 PM")
+    )}
+
+    // BELOW other private functions
+    private fun resetToInitialState() {
+        selectedDevice = null
+        connectedDeviceData.clear()
+        connected_device_adapter.notifyDataSetChanged()
+        mainBinding.deviceDetailsRvId.visibility = View.GONE
+        mainBinding.connectedDeviceDetailLlId.visibility = View.GONE
+        mainBinding.deviceDetailsRvId.visibility = View.GONE
+        mainBinding.shimmerViewContainer.stopShimmer()
+        mainBinding.shimmerViewContainer.visibility = View.GONE
+        mainBinding.searchDeviceButtonId.isEnabled = true
+    }
+
 
 }

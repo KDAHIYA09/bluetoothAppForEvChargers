@@ -3,6 +3,7 @@
 
     //search devices button
     <string name="search_device_button_txt">Search nearby devices</string>
+    <string name="disconnect_device_button_txt">Disconnect device</string>
     <string name="search_device_toast_txt">Searching nearby for available bluetooth devices</string>
 
 

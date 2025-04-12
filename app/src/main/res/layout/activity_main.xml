@@ -14,13 +14,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:padding="15dp"
+        android:backgroundTint="@color/blue"
+        android:padding="10dp"
         android:text="@string/search_device_button_txt"
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_device_button_id" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/available_devices_list_rv"
@@ -56,12 +68,42 @@
             android:textSize="30dp"
             android:textStyle="bold" />
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:shimmer_auto_start="true"
+            app:shimmer_duration="1500">
+
+            <include layout="@layout/shimmer_device_details_list_item" />
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/device_details_rv_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/connected_device_details_list_item"/>
+            android:visibility="gone"
+            tools:listitem="@layout/connected_device_details_list_item" />
 
+        <Button
+            android:id="@+id/disconnect_device_button_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:backgroundTint="@color/red"
+            android:layout_gravity="center"
+            android:text="@string/disconnect_device_button_txt"
+            android:textSize="20dp"
+            android:visibility="gone"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
 
