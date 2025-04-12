@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+    //search devices button
+    <string name="search_device_button_txt">Search nearby devices</string>
+    <string name="search_device_toast_txt">Searching nearby for available bluetooth devices</string>
+
+
+<!--    for showing available devices-->
+
+<!--    for connected device info-->
+    <string name="connected_device_header_txt">Connected device details</string>
+
+    <string name="connected_device_name_txt">Device name</string>
+    <string name="connected_device_name_value_txt">Your Device name</string>
+
+    <string name="connected_device_signal_strength_txt">Signal strength</string>
+    <string name="connected_device_signal_strength_value_txt">Your Device Signal strength</string>
+
+    <string name="connected_device_appearence_txt">Device appearance</string>
+    <string name="connected_device_appearence_value_txt">Your Device appearance</string>
+
+    <string name="connected_device_manufacturer_name_txt">Device manufacturer</string>
+    <string name="connected_device_manufacturer_name_value_txt">Your Device manufacturer</string>
+
+    <string name="connected_device_model_number_txt">Model number</string>
+    <string name="connected_device_model_number_value_txt">Your Device Model number</string>
+
+    <string name="app_name_firmware_revision_txt">Firmware revision</string>
+    <string name="app_name_firmware_revision_value_txt">Your Device Firmware revision</string>
+
+    <string name="app_name_battery_level_txt">Battery level</string>
+    <string name="app_name_battery_level_value_txt">Your Device Battery level</string>
+
+<!--    <string name="app_name">My Application</string>-->
+<!--    <string name="app_name">My Application</string>-->
+<!--    <string name="app_name">My Application</string>-->
+<!--    <string name="app_name">My Application</string>-->
+<!--    <string name="app_name">My Application</string>-->
+<!--    <string name="app_name">My Application</string>-->
+</resources>
