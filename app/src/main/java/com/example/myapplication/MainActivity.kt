@@ -1,12 +1,18 @@
 package com.example.myapplication
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,12 +30,15 @@ class MainActivity : AppCompatActivity() {
     private var deviceList = mutableListOf<bluetoothDevicesListDataClass>()
     private var connectedDeviceData = mutableListOf<connectedDeviceDetailsDataClass>()
     private var selectedDevice : bluetoothDevicesListDataClass? = null
+    private val bluetoothPermissionsRequestCode = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
+
+        ckeckAndRequestPermission()
 
         setupAvailableDevicesRecyclerView()
         setupConnectedDevicesRecyclerView()
@@ -129,6 +138,67 @@ class MainActivity : AppCompatActivity() {
         mainBinding.shimmerViewContainer.stopShimmer()
         mainBinding.shimmerViewContainer.visibility = View.GONE
         mainBinding.searchDeviceButtonId.isEnabled = true
+    }
+
+    //for permission check
+    private fun ckeckAndRequestPermission(){
+        val permissions = mutableListOf<String>()
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            permissions.add(android.Manifest.permission.BLUETOOTH_SCAN)
+            permissions.add(android.Manifest.permission.BLUETOOTH_CONNECT)
+        }else{
+            permissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+            permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            permissions.add(android.Manifest.permission.BLUETOOTH)
+            permissions.add(android.Manifest.permission.BLUETOOTH_ADMIN)
+        }
+
+        val missingPermissions = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if(missingPermissions.isNotEmpty()){
+            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), bluetoothPermissionsRequestCode)
+        }else{
+            initBluetoothFeatures()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == bluetoothPermissionsRequestCode){
+            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+            if(allGranted){
+                initBluetoothFeatures()
+            }else{
+                Toast.makeText(this, "Bluetooth permissions are required to use this app", Toast.LENGTH_SHORT).show()
+                showPermissionRequiredDialog()
+            }
+        }
+    }
+
+    private fun showPermissionRequiredDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Bluetooth Permissions Required")
+            .setMessage("This app needs Bluetooth permissions to function. Please grant them to continue. Or exit application.")
+            .setCancelable(false)
+            .setPositiveButton("Grant Permissions"){
+                _, _ -> ckeckAndRequestPermission()
+            }
+            .setNegativeButton("Exit App"){
+                _,_ -> finishAffinity()
+            }
+            .show()
+    }
+
+    private fun initBluetoothFeatures() {
+        Toast.makeText(this, "Permissions Granted Successfully", Toast.LENGTH_SHORT).show()
     }
 
 
