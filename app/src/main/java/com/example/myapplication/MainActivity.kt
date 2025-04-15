@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.PermissionHelper.getBluetoothPermissions
 import com.example.myapplication.adapters.bluetoothDevicesListAdapter
 import com.example.myapplication.adapters.connectedDeviceDetailsAdapter
 import com.example.myapplication.databinding.ActivityMainBinding
@@ -30,7 +31,18 @@ class MainActivity : AppCompatActivity() {
     private var deviceList = mutableListOf<bluetoothDevicesListDataClass>()
     private var connectedDeviceData = mutableListOf<connectedDeviceDetailsDataClass>()
     private var selectedDevice : bluetoothDevicesListDataClass? = null
-    private val bluetoothPermissionsRequestCode = 1001
+    private val bluetoothPermissions = arrayOf(
+        android.Manifest.permission.BLUETOOTH,
+        android.Manifest.permission.BLUETOOTH_ADMIN,
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_CONNECT
+    )
+    private lateinit var bluetoothHelper: BluetoothHelper
+
+
+    private val bluetoothRequestCode = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +50,10 @@ class MainActivity : AppCompatActivity() {
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
 
-        ckeckAndRequestPermission()
+        if (PermissionHelper.requestPermissionsIfNeeded(this, bluetoothPermissions, bluetoothRequestCode)) {
+            Toast.makeText(this, "Permissions Granted Successfully", Toast.LENGTH_SHORT).show()
+            initBluetoothFeatures()
+        }
 
         setupAvailableDevicesRecyclerView()
         setupConnectedDevicesRecyclerView()
@@ -140,30 +155,7 @@ class MainActivity : AppCompatActivity() {
         mainBinding.searchDeviceButtonId.isEnabled = true
     }
 
-    //for permission check
-    private fun ckeckAndRequestPermission(){
-        val permissions = mutableListOf<String>()
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            permissions.add(android.Manifest.permission.BLUETOOTH_SCAN)
-            permissions.add(android.Manifest.permission.BLUETOOTH_CONNECT)
-        }else{
-            permissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            permissions.add(android.Manifest.permission.BLUETOOTH)
-            permissions.add(android.Manifest.permission.BLUETOOTH_ADMIN)
-        }
-
-        val missingPermissions = permissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
-
-        if(missingPermissions.isNotEmpty()){
-            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), bluetoothPermissionsRequestCode)
-        }else{
-            initBluetoothFeatures()
-        }
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -172,33 +164,25 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == bluetoothPermissionsRequestCode){
-            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-            if(allGranted){
+        if (requestCode == 1001) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 initBluetoothFeatures()
-            }else{
-                Toast.makeText(this, "Bluetooth permissions are required to use this app", Toast.LENGTH_SHORT).show()
-                showPermissionRequiredDialog()
+            } else {
+                // Re-run the permission check to show rationale or settings dialog
+                PermissionHelper.requestPermissionsIfNeeded(this, getBluetoothPermissions(), 1001)
             }
         }
     }
 
-    private fun showPermissionRequiredDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Bluetooth Permissions Required")
-            .setMessage("This app needs Bluetooth permissions to function. Please grant them to continue. Or exit application.")
-            .setCancelable(false)
-            .setPositiveButton("Grant Permissions"){
-                _, _ -> ckeckAndRequestPermission()
-            }
-            .setNegativeButton("Exit App"){
-                _,_ -> finishAffinity()
-            }
-            .show()
-    }
+
 
     private fun initBluetoothFeatures() {
-        Toast.makeText(this, "Permissions Granted Successfully", Toast.LENGTH_SHORT).show()
+        bluetoothHelper = BluetoothHelper(this)
+
+        if (bluetoothHelper.initBluetooth()) {
+            Toast.makeText(this, "Bluetooth is ready", Toast.LENGTH_SHORT).show()
+            // Proceed to scanning in Step 2
+        }
     }
 
 
