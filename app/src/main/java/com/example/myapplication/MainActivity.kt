@@ -1,29 +1,31 @@
 package com.example.myapplication
 
+import android.Manifest
+import android.bluetooth.BluetoothDevice
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.PermissionHelper.getBluetoothPermissions
+import com.example.myapplication.helpers.PermissionHelper.getBluetoothPermissions
 import com.example.myapplication.adapters.bluetoothDevicesListAdapter
 import com.example.myapplication.adapters.connectedDeviceDetailsAdapter
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.dataclasses.bluetoothDevicesListDataClass
 import com.example.myapplication.dataclasses.connectedDeviceDetailsDataClass
+import com.example.myapplication.helpers.BluetoothHelper
+import com.example.myapplication.helpers.PermissionHelper
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(), BluetoothHelper.BluetoothScanListener {
 
     private lateinit var mainBinding: ActivityMainBinding
     private lateinit var available_bluetooth_devices_adapter : bluetoothDevicesListAdapter
@@ -31,7 +33,13 @@ class MainActivity : AppCompatActivity() {
     private var deviceList = mutableListOf<bluetoothDevicesListDataClass>()
     private var connectedDeviceData = mutableListOf<connectedDeviceDetailsDataClass>()
     private var selectedDevice : bluetoothDevicesListDataClass? = null
-    private val bluetoothPermissions = arrayOf(
+    private val bluetoothPermissions11 = arrayOf(
+        android.Manifest.permission.BLUETOOTH,
+        android.Manifest.permission.BLUETOOTH_ADMIN,
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+    )
+    private val bluetoothPermissions12 = arrayOf(
         android.Manifest.permission.BLUETOOTH,
         android.Manifest.permission.BLUETOOTH_ADMIN,
         android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -50,14 +58,26 @@ class MainActivity : AppCompatActivity() {
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
 
-        if (PermissionHelper.requestPermissionsIfNeeded(this, bluetoothPermissions, bluetoothRequestCode)) {
-            Toast.makeText(this, "Permissions Granted Successfully", Toast.LENGTH_SHORT).show()
-            initBluetoothFeatures()
+        window.statusBarColor = ContextCompat.getColor(this, R.color.blue)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            if (PermissionHelper.requestPermissionsIfNeeded(this, bluetoothPermissions12, bluetoothRequestCode)) {
+                Log.d("MainActivity", "Permissions Granted Successfully")
+                initBluetoothFeatures()
+            }
+        }else{
+            if (PermissionHelper.requestPermissionsIfNeeded(this, bluetoothPermissions11, bluetoothRequestCode)) {
+                Log.d("MainActivity", "Permissions Granted Successfully")
+                initBluetoothFeatures()
+            }
         }
 
         setupAvailableDevicesRecyclerView()
         setupConnectedDevicesRecyclerView()
-        handleSearchDeviceClick()
+
+        mainBinding.searchDeviceButtonId.setOnClickListener{
+            handleSearchDeviceClick()
+        }
 
         mainBinding.disconnectDeviceButtonId.setOnClickListener{
             resetToInitialState()
@@ -93,41 +113,38 @@ class MainActivity : AppCompatActivity() {
         mainBinding.shimmerViewContainer.startShimmer()
         mainBinding.shimmerViewContainer.visibility = View.VISIBLE
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            val dummyData = getDummyDeviceData()
-            connectedDeviceData.clear()
-            connectedDeviceData.addAll(dummyData)
-            connected_device_adapter.notifyDataSetChanged()
-
-            mainBinding.shimmerViewContainer.stopShimmer()
-            mainBinding.shimmerViewContainer.visibility = View.GONE
-            mainBinding.deviceDetailsRvId.visibility = View.VISIBLE
-            mainBinding.disconnectDeviceButtonId.visibility = View.VISIBLE
-        }, 1500)
+        bluetoothHelper.connectToDevice(device.mac_code)
     }
 
     private fun handleSearchDeviceClick() {
-        mainBinding.searchDeviceButtonId.setOnClickListener {
-            Toast.makeText(this, getString(R.string.search_device_toast_txt), Toast.LENGTH_SHORT).show()
-            mainBinding.loadingProgressBar.visibility = View.VISIBLE
+        Log.d("MainActivity", "Searching for Bluetooth devices...")
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                val dummyDevices = getDummyBluetoothDevices()
-                deviceList.clear()
-                deviceList.addAll(dummyDevices)
-                available_bluetooth_devices_adapter.notifyDataSetChanged()
+        // UI updates before starting scan
+        mainBinding.loadingProgressBar.visibility = View.VISIBLE
+        mainBinding.availableDevicesListRv.visibility = View.GONE
+        deviceList.clear()
+        available_bluetooth_devices_adapter.notifyDataSetChanged()
 
-                mainBinding.loadingProgressBar.visibility = View.GONE
-                mainBinding.availableDevicesListRv.visibility = View.VISIBLE
-            }, 1500)
+        // Start real Bluetooth scan
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, "Bluetooth permissions not granted", Toast.LENGTH_SHORT).show()
+                return
+            }
         }
+        bluetoothHelper.startDiscovery()
     }
 
     private fun getDummyBluetoothDevices(): List<bluetoothDevicesListDataClass> {
         return listOf(
-            bluetoothDevicesListDataClass("EV Charger 1"),
-            bluetoothDevicesListDataClass("EV Charger 2"),
-            bluetoothDevicesListDataClass("EV Charger 3")
+            bluetoothDevicesListDataClass("EV Charger 1", "111"),
+            bluetoothDevicesListDataClass("EV Charger 2", "222"),
+            bluetoothDevicesListDataClass("EV Charger 3", "333")
         )
     }
 
@@ -177,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initBluetoothFeatures() {
-        bluetoothHelper = BluetoothHelper(this)
+        bluetoothHelper = BluetoothHelper(this, this)
 
         if (bluetoothHelper.initBluetooth()) {
             Toast.makeText(this, "Bluetooth is ready", Toast.LENGTH_SHORT).show()
@@ -185,5 +202,87 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+//    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun onDeviceFound(device: BluetoothDevice) {
+//        if (!PermissionHelper.hasBluetoothPermissions(this)) {
+//            Toast.makeText(this, "Bluetooth permissions not granted", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+    Log.d("MainActivity", "Device found: ${device.name} - ${device.address}")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(this, "Bluetooth permissions not granted", Toast.LENGTH_SHORT).show()
+            return
+        }
+    }
+
+    Log.d("MainActivity", "Device adding")
+        val deviceData = bluetoothDevicesListDataClass(
+            name = device.name ?: "Unknown",
+            mac_code = device.address
+        )
+        // Avoid duplicates
+        if (deviceList.none { it.mac_code == deviceData.mac_code }) {
+            deviceList.add(deviceData)
+            available_bluetooth_devices_adapter.notifyItemInserted(deviceList.size - 1)
+        }
+
+        mainBinding.loadingProgressBar.visibility = View.GONE
+        mainBinding.availableDevicesListRv.visibility = View.VISIBLE
+
+    }
+
+    override fun onScanStarted() {
+        Log.d("MainActivity", "Bluetooth scan started")
+        mainBinding.loadingProgressBar.visibility = View.VISIBLE
+        deviceList.clear()
+        available_bluetooth_devices_adapter.notifyDataSetChanged()
+    }
+
+    override fun onScanFinished() {
+        Log.d("MainActivity", "Bluetooth scan finished")
+        mainBinding.loadingProgressBar.visibility = View.GONE
+        if (deviceList.isEmpty()) {
+            Toast.makeText(this, "No devices found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDeviceConnected(device: BluetoothDevice) {
+        runOnUiThread {
+            mainBinding.shimmerViewContainer.stopShimmer()
+            mainBinding.shimmerViewContainer.visibility = View.GONE
+            mainBinding.deviceDetailsRvId.visibility = View.VISIBLE
+            mainBinding.disconnectDeviceButtonId.visibility = View.VISIBLE
+
+            connectedDeviceData.clear()
+            connectedDeviceData.addAll(getDummyDeviceData())
+            connected_device_adapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onConnectionFailed(device: BluetoothDevice, reason: String) {
+        runOnUiThread {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                return@runOnUiThread
+            }
+            Toast.makeText(this, "Failed to connect to ${device.name ?: "device"}: $reason", Toast.LENGTH_LONG).show()
+            resetToInitialState()
+        }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetoothHelper.cleanup()
+    }
 
 }

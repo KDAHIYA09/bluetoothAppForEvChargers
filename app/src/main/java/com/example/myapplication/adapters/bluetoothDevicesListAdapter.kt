@@ -34,6 +34,7 @@ class bluetoothDevicesListAdapter(
 
         fun bind(devices: bluetoothDevicesListDataClass){
             binding.availableDeviceNameId.text = devices.name
+            binding.availableDeviceMaccodeId.text = devices.mac_code
 
             binding.root.setOnClickListener{
                 onItemClick(devices)

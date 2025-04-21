@@ -4,13 +4,24 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:background="@color/darkgrey"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/available_device_name_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Available device 1"
+        android:textColorHint="@color/white"
+        android:textSize="20dp"
+        android:textStyle="normal"
+        android:padding="5dp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/available_device_maccode_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Available device 1 code"
         android:textColorHint="@color/white"
         android:textSize="20dp"
         android:textStyle="normal"
