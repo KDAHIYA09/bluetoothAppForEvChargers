@@ -7,4 +7,20 @@
     <color name="whitish">#F0F0F0</color>
     <color name="red">#FC483B</color>
     <color name="blue">#3D59F1</color>
+
+
+    <color name="primary">#2970FF</color>
+    <color name="headingColor">#101828</color>
+    <color name="subheadingColor">#344054</color>
+    <color name="signupback">#f2f4f7</color>
+    <color name="edittexthintcolor">#9B9FA5</color>
+    <color name="errorColor">#F04438</color>
+    <color name="subheading_objective_select_color">#EAECF0</color>
+    <color name="subheading_courcefragment">#344054</color>
+    <color name="saffron">#F69223</color>
+    <color name="appliedcolor">#D1E0FF</color>
+    <color name="shortlistedcolor">#DCFAE6</color>
+    <color name="rejectedcolor">#F69223</color>
+    <color name="successcolor">#2D9431</color>
+
 </resources>

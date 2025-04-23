@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="60dp"
+                android:fontFamily="@font/source_sans_pro_regular"
+                android:text="Sign up"
+                android:textColor="@color/headingColor"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/nameField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Name"
+                    android:textColor="@color/subheadingColor"
+                    android:textSize="14sp" />
+
+                <!-- Horizontal layout for first and last name -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.example.myapplication.authScreen.CustomEditText
+                        android:id="@+id/firstNameETField"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_background"
+                        android:fontFamily="@font/source_sans_pro_regular"
+                        android:hint="First Name"
+                        android:maxLength="60"
+                        android:minHeight="48dp"
+                        android:padding="10dp"
+                        android:textColorHint="@color/edittexthintcolor"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content" />
+
+                    <com.example.myapplication.authScreen.CustomEditText
+                        android:id="@+id/lastNameETField"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_background"
+                        android:fontFamily="@font/source_sans_pro_regular"
+                        android:hint="Last Name"
+                        android:maxLength="60"
+                        android:minHeight="48dp"
+                        android:padding="10dp"
+                        android:textColorHint="@color/edittexthintcolor"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/nameErrorMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name is required"
+                    android:textColor="@color/errorColor"
+                    android:paddingLeft="2dp"
+                    android:visibility="gone"
+                    android:textSize="10sp"
+                    android:layout_marginTop="5sp"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/emailField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameField">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Email address"
+                    android:textColor="@color/subheadingColor"
+                    android:textSize="14sp" />
+
+
+                <com.example.myapplication.authScreen.CustomEditText
+                    android:id="@+id/emailETField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/edittext_background"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:hint="example@gmal.com"
+                    android:maxLength="250"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:textColorHint="@color/edittexthintcolor"
+                    android:textSize="14sp"/>
+
+
+
+                <TextView
+                    android:id="@+id/emailErrorMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email is required"
+                    android:textColor="@color/errorColor"
+                    android:paddingLeft="2dp"
+                    android:visibility="gone"
+                    android:textSize="10sp"
+                    android:layout_marginTop="5sp"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/phoneField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailField">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Phone Number"
+                    android:textColor="@color/subheadingColor"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:orientation="horizontal">
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/ccp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_showFlag="true"
+                        app:ccp_showNameCode="false"
+                        app:ccp_showFullName="false"/>
+
+                    <com.example.myapplication.authScreen.CustomEditText
+                        android:id="@+id/phoneETField"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_background"
+                        android:fontFamily="@font/source_sans_pro_regular"
+                        android:hint="Your Phone Number"
+                        android:inputType="phone"
+                        android:maxLength="15"
+                        android:minHeight="48dp"
+                        android:padding="10dp"
+                        android:textColorHint="@color/edittexthintcolor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/phoneErrorMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5sp"
+                    android:paddingStart="2dp"
+                    android:text="Phone number is required"
+                    android:textColor="@color/errorColor"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/confirmPasswordField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/passwordField">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Confirm password"
+                    android:textColor="@color/subheadingColor"
+                    android:textSize="14sp" />
+
+                <com.example.myapplication.authScreen.CustomEditText
+                    android:id="@+id/repeatPasswordETField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/edittext_background"
+                    android:drawableRight="@drawable/eye_off"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:hint="Repeat password"
+                    android:inputType="textWebPassword"
+                    android:minHeight="48dp"
+                    android:maxLength="16"
+                    android:padding="10dp"
+                    android:textColorHint="@color/edittexthintcolor"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/confirmPasswordErrorMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Confirm Password is required"
+                    android:textColor="@color/errorColor"
+                    android:paddingLeft="2dp"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="5sp"/>
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/passwordField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20sp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="49dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phoneField">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Password"
+                    android:textColor="@color/subheadingColor"
+                    android:textSize="14sp" />
+
+                <com.example.myapplication.authScreen.CustomEditText
+                    android:id="@+id/passwordETField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/edittext_background"
+                    android:drawableRight="@drawable/eye_off"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:hint="Must be 8 characters"
+                    android:maxLength="16"
+                    android:inputType="textWebPassword"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:textColorHint="@color/edittexthintcolor"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/PsswordErrorMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Password is required"
+                    android:textColor="@color/errorColor"
+                    android:paddingLeft="2dp"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="5sp"/>
+
+
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/createAccountBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/onboard_signup_bn_background"
+                android:fontFamily="@font/source_sans_pro_regular"
+                android:text="Create account"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/confirmPasswordField" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/continueWithGoogleBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/onboard_login_bn_background"
+                android:drawableStart="@drawable/google"
+                android:fontFamily="@font/source_sans_pro_regular"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:text="Continue with Google"
+                android:textAllCaps="false"
+                android:textColor="@color/headingColor"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/createAccountBtn" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/continueWithGoogleBtn">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="By creating an account or signing you agree"
+                    android:textColor="@color/edittexthintcolor"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/source_sans_pro_regular"
+                        android:text="to our"
+                        android:textColor="@color/edittexthintcolor"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/termsAndCondition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/source_sans_pro_regular"
+                        android:text="Terms and Conditions"
+                        android:textColor="@color/headingColor"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="Already have an account?"
+                    android:textColor="@color/edittexthintcolor"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/loginText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_regular"
+                    android:text="   Log in"
+                    android:textColor="@color/headingColor"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

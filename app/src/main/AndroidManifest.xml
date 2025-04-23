@@ -3,17 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
-    <!-- Needed for discovering nearby devices -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- Needed for discovering nearby devices -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- For Android 12+ -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
-    <!-- For Android 13+ (optional, only if you're getting location info from BT) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- For Android 12+ -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- For Android 13+ (optional, only if you're getting location info from BT) -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
     <application
@@ -27,13 +23,33 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".forgotPasswordScreens.SetNewPassword"
+            android:exported="false" />
+        <activity
+            android:name=".authScreen.VerifyOTPActivity"
+            android:exported="false" />
+        <activity
+            android:name=".authScreen.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".forgotPasswordScreens.ResetPasswordScreen"
+            android:exported="false" />
+        <activity
+            android:name=".forgotPasswordScreens.ForgotPasswordScreen"
+            android:exported="false" />
+        <activity
+            android:name=".loginScreens.login_screen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false">
+
         </activity>
     </application>
 

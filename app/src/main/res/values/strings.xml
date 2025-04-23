@@ -7,9 +7,9 @@
     <string name="search_device_toast_txt">Searching nearby for available bluetooth devices</string>
 
 
-<!--    for showing available devices-->
+    <!--    for showing available devices-->
 
-<!--    for connected device info-->
+    <!--    for connected device info-->
     <string name="connected_device_header_txt">Connected device details</string>
 
     <string name="connected_device_name_txt">Device name</string>
@@ -33,10 +33,10 @@
     <string name="app_name_battery_level_txt">Battery level</string>
     <string name="app_name_battery_level_value_txt">Your Device Battery level</string>
 
-<!--    <string name="app_name">My Application</string>-->
-<!--    <string name="app_name">My Application</string>-->
-<!--    <string name="app_name">My Application</string>-->
-<!--    <string name="app_name">My Application</string>-->
-<!--    <string name="app_name">My Application</string>-->
-<!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
+    <!--    <string name="app_name">My Application</string>-->
 </resources>
